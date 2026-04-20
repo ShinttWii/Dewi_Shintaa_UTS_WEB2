@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>BagVerse | Checkout Premium</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        html.dark body { background-color: #111827; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 dark:text-white transition-all min-h-screen">
+    
+    <nav class="p-6 border-b dark:border-gray-800 flex justify-between font-bold sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50">
+        <h1 class="text-xl font-black text-indigo-600 cursor-pointer" onclick="location.href='index.html'">BAGVERSE.</h1>
+        <div class="space-x-6 text-sm">
+            <a href="index.html" class="opacity-60">Beranda</a>
+            <a href="history.html" class="opacity-60">Riwayat</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-10 max-w-6xl">
+        <div class="grid lg:grid-cols-3 gap-10">
+            
+            <div class="lg:col-span-2 space-y-8">
+                <section>
+                    <h2 class="text-2xl font-black mb-6">Review Barang</h2>
+                    <div id="cart-list" class="space-y-4"></div>
+                </section>
+
+                <section class="bg-white dark:bg-gray-800 p-8 rounded-[32px] border dark:border-gray-700 shadow-sm">
+                    <h2 class="text-xl font-black mb-6">Informasi Pengiriman</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black opacity-50 uppercase ml-1">Nama Lengkap</label>
+                            <input type="text" id="co-name" placeholder="John Doe" class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black opacity-50 uppercase ml-1">Nomor WhatsApp</label>
+                            <input type="tel" id="co-phone" placeholder="0812xxxx" class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 outline-none">
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-black opacity-50 uppercase ml-1">Alamat Lengkap</label>
+                            <textarea id="co-address" placeholder="Jalan, No Rumah, Kec, Kota/Kab" class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 h-24 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="text-[10px] font-black opacity-50 uppercase ml-1">Pilih Ekspedisi</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="shipping" value="20000" class="hidden peer" checked onchange="updateTotal()">
+                                <div class="p-3 border rounded-xl text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition">
+                                    <p class="font-bold text-xs uppercase">J&T Reg</p>
+                                    <p class="text-[10px] opacity-60">Rp 20.000</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="shipping" value="15000" class="hidden peer" onchange="updateTotal()">
+                                <div class="p-3 border rounded-xl text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition">
+                                    <p class="font-bold text-xs uppercase">Sicepat</p>
+                                    <p class="text-[10px] opacity-60">Rp 15.000</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="shipping" value="25000" class="hidden peer" onchange="updateTotal()">
+                                <div class="p-3 border rounded-xl text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition">
+                                    <p class="font-bold text-xs uppercase">JNE YES</p>
+                                    <p class="text-[10px] opacity-60">Rp 25.000</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="shipping" value="0" class="hidden peer" onchange="updateTotal()">
+                                <div class="p-3 border rounded-xl text-center peer-checked:border-indigo-600 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition">
+                                    <p class="font-bold text-xs uppercase">Ambil Sendiri</p>
+                                    <p class="text-[10px] opacity-60">Free</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-[32px] shadow-xl border dark:border-gray-700 sticky top-24 space-y-6">
+                    <h3 class="text-xl font-black">Ringkasan Biaya</h3>
+                    
+                    <div class="space-y-3 text-sm border-b dark:border-gray-700 pb-4">
+                        <div class="flex justify-between opacity-60">
+                            <span>Subtotal Barang</span>
+                            <span id="subtotal-display">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between opacity-60">
+                            <span>Ongkos Kirim</span>
+                            <span id="shipping-display">Rp 20.000</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold">Total Bayar</span>
+                        <span id="grand-total" class="text-2xl font-black text-indigo-600">Rp 0</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-[10px] font-black opacity-50 uppercase">Metode Pembayaran</p>
+                        <select id="pay-method" class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 font-bold text-sm outline-none">
+                            <option value="QRIS">QRIS / E-Wallet (Otomatis)</option>
+                            <option value="BCA">Transfer Bank BCA</option>
+                            <option value="COD">Bayar di Tempat (COD)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="handleCheckout()" id="pay-btn" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95">
+                        Konfirmasi Pembayaran
+                    </button>
+                    
+                    <p class="text-[10px] text-center opacity-40 leading-tight">Dengan menekan tombol, Anda setuju dengan syarat dan ketentuan BagVerse.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 translate-y-40 opacity-0 transition-all duration-500"></div>
+
+    <script type="module">
+        import { Store, showToast } from './app.js';
+        Store.initTheme();
+
+        let cart = Store.getCart();
+
+        function render() {
+            const container = document.getElementById('cart-list');
+            if(cart.length === 0) {
+                container.innerHTML = `<div class="p-20 text-center bg-white dark:bg-gray-800 rounded-3xl border dark:border-gray-700 opacity-40 font-bold">Keranjangmu kosong. Yuk belanja dulu!</div>`;
+                document.getElementById('pay-btn').disabled = true;
+                return;
+            }
+
+            container.innerHTML = cart.map(i => `
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-3xl flex items-center gap-4 border dark:border-gray-700 shadow-sm group">
+                    <img src="${i.image}" onerror="this.src='https://placehold.co/100x100'" class="w-20 h-20 object-cover rounded-2xl">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm leading-tight">${i.name}</h4>
+                        <p class="text-indigo-600 font-black text-xs mt-1">Rp ${i.price.toLocaleString('id-ID')}</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-gray-100 dark:bg-gray-700 rounded-xl p-2">
+                        <button onclick="qty(${i.id}, -1)" class="w-6 font-black">-</button>
+                        <span class="font-black text-sm">${i.qty}</span>
+                        <button onclick="qty(${i.id}, 1)" class="w-6 font-black">+</button>
+                    </div>
+                </div>
+            `).join('');
+            updateTotal();
+        }
+
+        window.updateTotal = () => {
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const shipping = parseInt(document.querySelector('input[name="shipping"]:checked').value);
+            const grandTotal = subtotal + shipping;
+
+            document.getElementById('subtotal-display').innerText = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('shipping-display').innerText = shipping === 0 ? 'Free' : `Rp ${shipping.toLocaleString('id-ID')}`;
+            document.getElementById('grand-total').innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+        };
+
+        window.qty = (id, d) => {
+            const item = cart.find(x => x.id === id);
+            if(item) {
+                item.qty += d;
+                if(item.qty < 1) cart = cart.filter(x => x.id !== id);
+                Store.saveCart(cart); render();
+            }
+        };
+
+        window.handleCheckout = () => {
+            const user = Store.getUser();
+            const name = document.getElementById('co-name').value;
+            const phone = document.getElementById('co-phone').value;
+            const address = document.getElementById('co-address').value;
+
+            if(!user) return showToast("Harap login terlebih dahulu!", "error");
+            if(!name || !phone || !address) return showToast("Lengkapi data pengiriman!", "error");
+
+            const btn = document.getElementById('pay-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-bounce">...</span> Memproses Pembayaran`;
+
+            setTimeout(() => {
+                const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+                const shipping = parseInt(document.querySelector('input[name="shipping"]:checked').value);
+                
+                const order = {
+                    orderId: 'BVR-' + Date.now(),
+                    userEmail: user.email,
+                    shipping: { name, phone, address, cost: shipping },
+                    payment: document.getElementById('pay-method').value,
+                    items: [...cart],
+                    totalPrice: subtotal + shipping,
+                    date: new Date().toLocaleString('id-ID'),
+                    status: 'Dibayar'
+                };
+
+                const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                allOrders.push(order);
+                localStorage.setItem('orders', JSON.stringify(allOrders));
+                
+                Store.saveCart([]);
+                showToast("🎉 Pembayaran Berhasil! Pesanan sedang diproses.");
+                setTimeout(() => location.href = 'history.html', 2000);
+            }, 2500);
+        };
+
+        render();
+    </script>
+</body>
+</html>

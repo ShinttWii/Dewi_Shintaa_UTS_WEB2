@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>BagVerse | Daftar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-6">
+    <div class="bg-white p-10 rounded-[40px] shadow-2xl w-full max-w-md">
+        <h1 class="text-3xl font-black text-indigo-600 text-center mb-8 italic">BAGVERSE.</h1>
+        <form id="reg-form" class="space-y-4">
+            <input type="text" id="name" placeholder="Nama Lengkap" required class="w-full p-4 rounded-2xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
+            <input type="email" id="email" placeholder="Email" required class="w-full p-4 rounded-2xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
+            <input type="password" id="password" placeholder="Password" required class="w-full p-4 rounded-2xl bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-500">
+            <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-700 transition">Daftar Akun</button>
+        </form>
+        <p class="text-center mt-6 text-xs font-bold opacity-50 uppercase">Sudah punya akun? <a href="login.html" class="text-indigo-600 underline">Login</a></p>
+    </div>
+
+    <script type="module">
+        import { showAlert, showToast } from './app.js';
+
+        document.getElementById('reg-form').onsubmit = (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Database User Lokal
+            const users = JSON.parse(localStorage.getItem('users_db')) || [];
+
+            // Cek email duplikat
+            if (users.find(u => u.email === email)) {
+                return alert("Email sudah terdaftar!");
+            }
+
+            // Simpan sebagai role user biasa
+            users.push({ name, email, password, role: 'user' });
+            localStorage.setItem('users_db', JSON.stringify(users));
+
+            alert("Pendaftaran Berhasil! Silakan Login.");
+            window.location.href = 'login.html';
+        };
+    </script>
+</body>
+</html>

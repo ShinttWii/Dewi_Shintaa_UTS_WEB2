@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>BagVerse Admin | Full Management</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        html.dark body { background-color: #111827; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 dark:text-white min-h-screen transition-all duration-300">
+    
+    <nav class="bg-black text-white p-4 sticky top-0 z-50 flex justify-between items-center shadow-2xl">
+        <h1 class="text-xl font-black text-indigo-400">BAGVERSE ADMIN</h1>
+        <div class="flex items-center gap-6">
+            <a href="index.html" class="text-xs hover:underline">Lihat Toko</a>
+            <button onclick="logout()" class="bg-red-600 px-4 py-2 rounded-lg font-bold text-xs">Keluar</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 lg:p-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border dark:border-gray-700 shadow-sm">
+                <p class="text-[10px] font-black opacity-50 uppercase">Total Produk</p>
+                <p id="s-p" class="text-3xl font-black">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border dark:border-gray-700 shadow-sm">
+                <p class="text-[10px] font-black opacity-50 uppercase">Pesanan</p>
+                <p id="s-o" class="text-3xl font-black">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border dark:border-gray-700 shadow-sm">
+                <p class="text-[10px] font-black opacity-50 uppercase text-yellow-500">Omzet</p>
+                <p id="s-r" class="text-3xl font-black text-yellow-500">Rp 0</p>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <form id="add-form" class="bg-white dark:bg-gray-800 p-6 rounded-3xl space-y-3 h-fit border dark:border-gray-700 shadow-sm">
+                <h3 class="font-bold text-xs mb-2 uppercase opacity-50">Tambah Produk Baru</h3>
+                <input type="text" id="n" placeholder="Nama Tas" required class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="number" id="p" placeholder="Harga" required class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 outline-none">
+                
+                <select id="cat" class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-xs">
+                    <option value="Pria">Pria</option>
+                    <option value="Wanita">Wanita</option>
+                    <option value="Unisex">Unisex</option>
+                </select>
+
+                <input type="text" id="i" placeholder="URL Foto (https://...)" required class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 outline-none">
+                <textarea id="desc" placeholder="Detail Deskripsi" required class="w-full p-3 rounded-xl border dark:bg-gray-700 dark:border-gray-600 h-24 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                
+                <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold uppercase text-xs shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition">Publish Produk</button>
+            </form>
+
+            <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border dark:border-gray-700 shadow-sm">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-50 dark:bg-gray-900/50 text-[10px] font-black uppercase opacity-60">
+                        <tr><th class="p-4">Info Produk</th><th class="p-4 text-center">Aksi</th></tr>
+                    </thead>
+                    <tbody id="t-b" class="divide-y dark:divide-gray-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="edit-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-[40px] p-8 shadow-2xl border dark:border-gray-700">
+            <h3 class="text-2xl font-black mb-6">Edit Produk</h3>
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <input type="text" id="edit-n" placeholder="Nama" class="w-full p-3 border rounded-2xl dark:bg-gray-700 dark:border-gray-600 outline-none">
+                <input type="number" id="edit-p" placeholder="Harga" class="w-full p-3 border rounded-2xl dark:bg-gray-700 dark:border-gray-600 outline-none">
+                
+                <select id="edit-cat" class="w-full p-3 border rounded-2xl dark:bg-gray-700 dark:border-gray-600 outline-none font-bold text-xs">
+                    <option value="Pria">Pria</option>
+                    <option value="Wanita">Wanita</option>
+                    <option value="Unisex">Unisex</option>
+                </select>
+
+                <input type="text" id="edit-i" placeholder="URL Gambar" class="w-full p-3 border rounded-2xl dark:bg-gray-700 dark:border-gray-600 outline-none">
+                <textarea id="edit-desc" placeholder="Deskripsi" class="w-full p-3 border rounded-2xl dark:bg-gray-700 dark:border-gray-600 h-24 outline-none"></textarea>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-gray-100 dark:bg-gray-700 py-4 rounded-2xl font-bold transition">Batal</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-indigo-500/30">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Store } from './app.js';
+        Store.initTheme();
+
+        if(Store.getUser()?.role !== 'admin') window.location.href = 'index.html';
+
+        async function init() {
+            const products = await Store.getProducts();
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            
+            document.getElementById('s-p').innerText = products.length;
+            document.getElementById('s-o').innerText = orders.length;
+            const rev = orders.reduce((sum, o) => sum + (parseFloat(o.totalPrice) || 0), 0);
+            document.getElementById('s-r').innerText = `Rp ${rev.toLocaleString('id-ID')}`;
+            
+            document.getElementById('t-b').innerHTML = products.map(p => `
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                    <td class="p-4 flex items-center gap-4">
+                        <img src="${p.image}" onerror="this.src='https://placehold.co/100x100?text=No+Img'" class="w-12 h-12 rounded-2xl object-cover shadow-sm">
+                        <div>
+                            <p class="font-bold text-sm leading-tight">${p.name}</p>
+                            <div class="flex gap-2 items-center mt-1">
+                                <span class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 px-2 py-0.5 rounded text-[8px] font-black uppercase">${p.category || 'Unisex'}</span>
+                                <p class="text-indigo-600 font-bold text-[10px]">Rp ${p.price.toLocaleString('id-ID')}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex justify-center gap-4">
+                            <button onclick="openEdit(${p.id})" class="text-indigo-600 font-bold hover:underline">Edit</button>
+                            <button onclick="del(${p.id})" class="text-red-500 font-bold hover:underline">Hapus</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // TAMBAH PRODUK
+        document.getElementById('add-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const products = await Store.getProducts();
+            const newProd = { 
+                id: Date.now(), 
+                name: document.getElementById('n').value, 
+                price: parseInt(document.getElementById('p').value), 
+                category: document.getElementById('cat').value, // Mengambil kategori
+                image: document.getElementById('i').value, 
+                description: document.getElementById('desc').value, 
+                rating: 5
+            };
+            products.push(newProd);
+            localStorage.setItem('all_products', JSON.stringify(products));
+            e.target.reset(); init();
+        }
+
+        // BUKA EDIT
+        window.openEdit = async (id) => {
+            const products = await Store.getProducts();
+            const p = products.find(x => x.id === id);
+            if(p) {
+                document.getElementById('edit-id').value = p.id;
+                document.getElementById('edit-n').value = p.name;
+                document.getElementById('edit-p').value = p.price;
+                document.getElementById('edit-cat').value = p.category || 'Unisex'; // Set kategori saat edit
+                document.getElementById('edit-i').value = p.image;
+                document.getElementById('edit-desc').value = p.description || '';
+                document.getElementById('edit-modal').classList.remove('hidden');
+            }
+        }
+
+        window.closeModal = () => document.getElementById('edit-modal').classList.add('hidden');
+
+        // SIMPAN EDIT
+        document.getElementById('edit-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-id').value);
+            const products = await Store.getProducts();
+            const index = products.findIndex(x => x.id === id);
+            
+            if(index !== -1) {
+                products[index] = {
+                    ...products[index],
+                    name: document.getElementById('edit-n').value,
+                    price: parseInt(document.getElementById('edit-p').value),
+                    category: document.getElementById('edit-cat').value, // Update kategori
+                    image: document.getElementById('edit-i').value,
+                    description: document.getElementById('edit-desc').value
+                };
+                localStorage.setItem('all_products', JSON.stringify(products));
+                closeModal(); init();
+            }
+        }
+
+        // HAPUS
+        window.del = async (id) => {
+            if(confirm("Hapus produk ini?")) {
+                let products = await Store.getProducts();
+                products = products.filter(x => x.id !== id);
+                localStorage.setItem('all_products', JSON.stringify(products));
+                init();
+            }
+        }
+
+        window.logout = Store.logout;
+        init();
+    </script>
+</body>
+</html>

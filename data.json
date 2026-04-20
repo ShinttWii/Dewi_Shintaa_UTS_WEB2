@@ -1,0 +1,20 @@
+[
+  {
+    "id": 101,
+    "name": "Luxury Leather Tote",
+    "price": 2450000,
+    "category": "Wanita",
+    "rating": 5,
+    "image": "https://i.pinimg.com/736x/a5/65/b9/a565b95819a8faebb8b105a4c30e7fe0.jpg",
+    "description": "Tas tote kulit asli premium dengan desain elegan."
+  },
+  {
+    "id": 102,
+    "name": "Business Briefcase",
+    "price": 1850000,
+    "category": "Pria",
+    "rating": 4,
+    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
+    "description": "Tas kerja profesional dengan kompartemen laptop."
+  }
+]

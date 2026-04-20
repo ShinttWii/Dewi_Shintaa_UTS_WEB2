@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>BagVerse | Login Anti Error</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-6">
+    
+    <div class="bg-white p-10 rounded-[40px] shadow-2xl w-full max-w-md border">
+        <h1 class="text-3xl font-black text-indigo-600 text-center mb-8 italic italic">BAGVERSE.</h1>
+        
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="text-[10px] font-bold opacity-50 ml-2">EMAIL</label>
+                <input type="email" id="email" required placeholder="admin@mail.com" 
+                    class="w-full p-4 rounded-2xl bg-gray-50 border-none outline-none focus:ring-2 focus:ring-indigo-600 transition">
+            </div>
+            <div>
+                <label class="text-[10px] font-bold opacity-50 ml-2">PASSWORD</label>
+                <input type="password" id="password" required placeholder="admin" 
+                    class="w-full p-4 rounded-2xl bg-gray-50 border-none outline-none focus:ring-2 focus:ring-indigo-600 transition">
+            </div>
+            
+            <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg">
+                Masuk Sekarang
+            </button>
+        </form>
+
+        <p class="text-center mt-6 text-xs font-bold opacity-50">
+            Belum punya akun? <a href="register.html" class="text-indigo-600 underline">Daftar Akun Baru</a>
+        </p>
+    </div>
+
+    <script>
+        // KODE LANGSUNG DI SINI BIAR GAK RIBET IMPORT
+        const loginForm = document.getElementById('login-form');
+
+        loginForm.onsubmit = function(e) {
+            e.preventDefault(); // Biar gak refresh halaman
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            // 1. Ambil data user dari register (jika ada)
+            const users = JSON.parse(localStorage.getItem('users_db')) || [];
+
+            // 2. Cek Hardcoded Admin (Pasti Bisa Masuk)
+            if (email === "admin@mail.com" && password === "admin") {
+                const adminData = { name: "Admin", email: email, role: "admin" };
+                localStorage.setItem('session', JSON.stringify(adminData));
+                alert("Login Admin Berhasil!");
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // 3. Cek Database User (Hasil Register)
+            const userMatch = users.find(u => u.email === email && u.password === password);
+
+            if (userMatch) {
+                localStorage.setItem('session', JSON.stringify(userMatch));
+                alert("Selamat Datang, " + userMatch.name + "!");
+                window.location.href = 'index.html';
+            } else {
+                alert("Email atau Password salah! Coba admin@mail.com / admin");
+            }
+        };
+    </script>
+</body>
+</html>
